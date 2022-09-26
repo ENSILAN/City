@@ -1,0 +1,13 @@
+name: City
+version: 1.0
+author: NathanFallet
+main: me.nathanfallet.ensilan.city.City
+depend: [Core]
+api-version: 1.19
+commands:
+  bank:
+    description: Déposer ou retirer des émeraudes
+  chunk:
+    description: Acheter ou vendre un chunk
+  start:
+    description: Démarrer la partie
