@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import me.nathanfallet.ensilan.city.City;
 import me.nathanfallet.ensilan.core.Core;
 import me.nathanfallet.ensilan.core.models.AbstractGame;
 import me.nathanfallet.ensilan.core.models.EnsilanPlayer;
@@ -33,7 +34,7 @@ public class GameProcess extends AbstractGame {
 	// Initializer
 	public GameProcess() {
 		// Get from file
-		File f = new File("plugins/City/game_process.yml");
+		File f = new File(City.getInstance().getDataFolder(), "game_process.yml");
 		if (!f.exists()) {
 			return;
 		}
@@ -56,7 +57,7 @@ public class GameProcess extends AbstractGame {
 
 	// Save values to file
 	public void save() {
-		File f = new File("plugins/City/game_process.yml");
+		File f = new File(City.getInstance().getDataFolder(), "game_process.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
 
 		config.set("playing", state == GameState.IN_GAME);
