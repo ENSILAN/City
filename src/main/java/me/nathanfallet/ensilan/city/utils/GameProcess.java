@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import me.nathanfallet.ensilan.core.Core;
 import me.nathanfallet.ensilan.core.models.AbstractGame;
+import me.nathanfallet.ensilan.core.models.EnsilanPlayer;
 
 public class GameProcess extends AbstractGame {
 
@@ -192,6 +193,12 @@ public class GameProcess extends AbstractGame {
 	public ArrayList<UUID> getAllPlayers() {
 		// In the city, every online player is playing
 		return getPlayers();
+	}
+
+    // Make a player join this game
+	@Override
+    public void join(Player player, EnsilanPlayer ep) {
+		// Nothing to do here
 	}
 
 	// Get time as string
