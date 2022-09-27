@@ -2,7 +2,9 @@ package me.nathanfallet.ensilan.city.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -17,12 +19,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.nathanfallet.ensilan.core.Core;
+import me.nathanfallet.ensilan.core.models.AbstractGame;
 
-public class GameProcess {
+public class GameProcess extends AbstractGame {
 
 	// Stored properties
-	private boolean playing;
-	private boolean stopped;
 	private int minute;
 	private int hour;
 	private int day;
@@ -38,8 +39,9 @@ public class GameProcess {
 
 		// Load vars
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
-		playing = config.getBoolean("playing");
-		stopped = config.getBoolean("stopped");
+		boolean playing = config.getBoolean("playing");
+		boolean stopped = config.getBoolean("stopped");
+		state = playing ? GameState.IN_GAME : stopped ? GameState.FINISHED : GameState.WAITING;
 		minute = config.getInt("minute");
 		hour = config.getInt("hour");
 		day = config.getInt("day");
@@ -56,8 +58,8 @@ public class GameProcess {
 		File f = new File("plugins/City/game_process.yml");
 		FileConfiguration config = YamlConfiguration.loadConfiguration(f);
 
-		config.set("playing", playing);
-		config.set("stopped", stopped);
+		config.set("playing", state == GameState.IN_GAME);
+		config.set("stopped", state == GameState.FINISHED);
 		config.set("minute", minute);
 		config.set("hour", hour);
 		config.set("day", day);
@@ -70,51 +72,136 @@ public class GameProcess {
 		}
 	}
 
-	// Increment time
-	public void increment() {
-		if (playing) {
-			// Increment minute
-			minute++;
+	// Countdown before the start of the game. Zero to disable
+	@Override
+	public int getCountdown() {
+		return 0;
+	}
 
-			// If 60 minutes, increment hour
-			if (minute > 59) {
-				minute = 0;
-				hour++;
+	// Number of players required for the game to start
+	@Override
+	public int getMinPlayers() {
+		return 0;
+	}
 
-				// If hour is multiple of 5, show a tip
-				if (hour % 5 == 0) {
-					tip();
-				}
-			}
+	// Max number of players in the game
+	@Override
+	public int getMaxPlayers() {
+		return 0;
+	}
 
-			// If 20 hours, increment day
-			if (hour > 19) {
-				hour = 0;
-				day++;
+	// Name of the game
+	@Override
+	public String getGameName() {
+		return "City";
+	}
 
-				// If day is multiple of 3, pop a chest
-				if (day % 3 == 0) {
-					popRandomChest();
-				}
+	// Number of the game
+	@Override
+	public int getGameNumber() {
+		return 1;
+	}
+
+	// Handle the start process of the game
+	@Override
+	public void start() {
+		// Set playing and time
+		state = GameState.IN_GAME;
+		minute = 0;
+		hour = 0;
+		day = 0;
+		message = 0;
+
+		// Set world time
+		for (World w : Bukkit.getWorlds()) {
+			w.setTime(0);
+			w.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+		}
+
+		// Broadcast it
+		Bukkit.broadcastMessage("§6§lLa partie commence, que le meilleur gagne !");
+
+		// Change players game mode
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (!player.isOp()) {
+				player.setGameMode(GameMode.SURVIVAL);
 			}
 		}
 	}
 
-	// Check if the game is playing
-	public boolean isPlaying() {
-		return playing;
+	// Handle the stop process of the game
+	@Override
+	public void stop() {
+		// Mark game as finished
+		state = GameState.FINISHED;
+
+		// Broadcast it
+		Bukkit.broadcastMessage("§6§lC'est terminé !");
+		Bukkit.broadcastMessage("§6§lAllez voir le classement pour savoir qui a gagné.");
+
+		// Change players game mode
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			if (!player.isOp()) {
+				player.setGameMode(GameMode.ADVENTURE);
+			}
+		}
 	}
 
-	// Check if the game is stopped
-	public boolean isStopped() {
-		return stopped;
+	// Called every second
+	@Override
+	public void mainHandler() {
+		// Increment minute
+		minute++;
+
+		// If 60 minutes, increment hour
+		if (minute > 59) {
+			minute = 0;
+			hour++;
+
+			// If hour is multiple of 5, show a tip
+			if (hour % 5 == 0) {
+				tip();
+			}
+		}
+
+		// If 20 hours, increment day
+		if (hour > 19) {
+			hour = 0;
+			day++;
+
+			// If day is multiple of 3, pop a chest
+			if (day % 3 == 0) {
+				popRandomChest();
+			}
+		}
+	}
+
+	// Get players participating in the game (excluding those who lost)
+	@Override
+	public ArrayList<UUID> getPlayers() {
+		// In the city, every online player is playing
+		ArrayList<UUID> result = new ArrayList<UUID>();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			result.add(p.getUniqueId());
+		}
+		return result;
+	}
+
+	// Get all players of the game, even those who lost
+	@Override
+	public ArrayList<UUID> getAllPlayers() {
+		// In the city, every online player is playing
+		return getPlayers();
 	}
 
 	// Get time as string
-	public String toString() {
-		if (playing) {
+	@Override
+	public String getGameDescription() {
+		if (state == GameState.IN_GAME) {
 			return "Jour " + (day + 1) + " - " + (hour >= 10 ? hour : ("0" + hour)) + ":"
 					+ (minute >= 10 ? minute : ("0" + minute));
+		} else if (state == GameState.FINISHED) {
+			return "Terminé !";
 		} else {
 			return "En attente...";
 		}
@@ -162,10 +249,10 @@ public class GameProcess {
 	public void tip() {
 		// List of messages
 		String[] messages = {
-			"N'oubliez pas de déposer vos émeraudes à la banque !",
-			"Faites des échanges avec les villageois pour obtenir des émeraudes !",
-			"Soyez le premier à trouver un coffre caché !",
-			"Achetez un chunk au spawn pour protéger vos coffres !"
+				"N'oubliez pas de déposer vos émeraudes à la banque !",
+				"Faites des échanges avec les villageois pour obtenir des émeraudes !",
+				"Soyez le premier à trouver un coffre caché !",
+				"Achetez un chunk au spawn pour protéger vos coffres !"
 		};
 
 		// Broadcast current
@@ -177,56 +264,6 @@ public class GameProcess {
 		// Reset if too high
 		if (message >= messages.length) {
 			message = 0;
-		}
-	}
-
-	// Start the game
-	public void start() {
-		// Check if the game is not already playing
-		if (!playing && !stopped) {
-			// Set playing and time
-			playing = true;
-			minute = 0;
-			hour = 0;
-			day = 0;
-			message = 0;
-
-			// Set world time
-			for (World w : Bukkit.getWorlds()) {
-				w.setTime(0);
-				w.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-			}
-
-			// Broadcast it
-			Bukkit.broadcastMessage("§6§lLa partie commence, que le meilleur gagne !");
-
-			// Change players game mode
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.isOp()) {
-					player.setGameMode(GameMode.SURVIVAL);
-				}
-			}
-		}
-	}
-
-	// Stop the game
-	public void stop() {
-		// Check if the game is playing
-		if (playing) {
-			// Set playing
-			playing = false;
-			stopped = true;
-
-			// Broadcast it
-			Bukkit.broadcastMessage("§6§lC'est terminé !");
-			Bukkit.broadcastMessage("§6§lAllez voir le classement pour savoir qui a gagné.");
-
-			// Change players game mode
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				if (!player.isOp()) {
-					player.setGameMode(GameMode.ADVENTURE);
-				}
-			}
 		}
 	}
 

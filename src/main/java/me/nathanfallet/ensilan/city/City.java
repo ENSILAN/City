@@ -32,6 +32,7 @@ import me.nathanfallet.ensilan.core.Core;
 import me.nathanfallet.ensilan.core.interfaces.LeaderboardGenerator;
 import me.nathanfallet.ensilan.core.interfaces.ScoreboardGenerator;
 import me.nathanfallet.ensilan.core.models.EnsilanPlayer;
+import me.nathanfallet.ensilan.core.models.AbstractGame.GameState;
 
 public class City extends JavaPlugin {
 
@@ -58,6 +59,7 @@ public class City extends JavaPlugin {
 
 		// Load game process
 		process = new GameProcess();
+		Core.getInstance().getGames().add(process);
 
 		// Init players
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -103,7 +105,6 @@ public class City extends JavaPlugin {
 		Core.getInstance().getScoreboardGenerators().add(new ScoreboardGenerator() {
 			@Override
 			public List<String> generateLines(Player player, EnsilanPlayer ep) {
-				String time = process.toString();
 				CityPlayer zp = getPlayer(player.getUniqueId());
 
 				ArrayList<String> lines = new ArrayList<String>();
@@ -112,7 +113,7 @@ public class City extends JavaPlugin {
 				lines.add("§f" + zp.getCachedEmeralds() + " émeraudes");
 				lines.add("§d");
 				lines.add("§d§lTemps :");
-				lines.add("§f" + time);
+				lines.add("§f" + process.getGameDescription());
 
 				return lines;
 			}
@@ -136,15 +137,6 @@ public class City extends JavaPlugin {
 		getCommand("bank").setExecutor(new BankCmd());
 		getCommand("chunk").setExecutor(new ChunkCmd());
 		getCommand("start").setExecutor(new StartCmd());
-
-		// Update some shown informations
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-			@Override
-			public void run() {
-				// Increment timer
-				process.increment();
-			}
-		}, 0, 20);
 	}
 
 	// Disable
@@ -198,12 +190,12 @@ public class City extends JavaPlugin {
 
 	// Check if the game is playing
 	public boolean isPlaying() {
-		return process.isPlaying();
+		return process.getState() == GameState.IN_GAME;
 	}
 
 	// Check if the game is stopped
 	public boolean isStopped() {
-		return process.isStopped();
+		return process.getState() == GameState.FINISHED;
 	}
 
 	// Start the game
