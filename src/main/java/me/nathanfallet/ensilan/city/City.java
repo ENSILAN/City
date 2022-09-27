@@ -97,7 +97,7 @@ public class City extends JavaPlugin {
 
 			@Override
 			public String getTitle() {
-				return "Emeraudes";
+				return "Classement des joueurs selon les émeraudes à la banque";
 			}
 		});
 
