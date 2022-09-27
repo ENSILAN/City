@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.nathanfallet.ensilan.city.City;
-import me.nathanfallet.ensilan.city.utils.ZabriPlayer;
+import me.nathanfallet.ensilan.city.utils.CityPlayer;
 
 public class BankCmd implements CommandExecutor {
 
@@ -21,7 +21,7 @@ public class BankCmd implements CommandExecutor {
 		if (sender instanceof Player) {
 			// Get basic informations and balance
 			Player player = (Player) sender;
-			ZabriPlayer zp = new ZabriPlayer(player);
+			CityPlayer zp = City.getInstance().getPlayer(player.getUniqueId());
 			int balance = zp.getEmeralds();
 
 			// Check sub command

@@ -131,7 +131,7 @@ public class GameProcess {
 			// Create a random location
 			location = Core.getInstance().getSpawn().add(random.nextDouble() * 1000,
 					-random.nextDouble() * 30, random.nextDouble() * 1000);
-			ZabriChunk zc = new ZabriChunk(location.getChunk().getX(), location.getChunk().getZ());
+			CityChunk zc = new CityChunk(location.getChunk().getX(), location.getChunk().getZ());
 
 			// Check if chunk is safe
 			if (zc.getOwner().isEmpty()) {

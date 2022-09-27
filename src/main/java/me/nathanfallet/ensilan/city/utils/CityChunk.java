@@ -9,14 +9,14 @@ import java.util.List;
 
 import me.nathanfallet.ensilan.core.Core;
 
-public class ZabriChunk {
+public class CityChunk {
 
 	// Stored properties
 	private int x;
 	private int z;
 
 	// Initializer
-	public ZabriChunk(int x, int z) {
+	public CityChunk(int x, int z) {
 		this.x = x;
 		this.z = z;
 	}

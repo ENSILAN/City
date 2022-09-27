@@ -8,7 +8,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import me.nathanfallet.ensilan.city.City;
-import me.nathanfallet.ensilan.city.utils.ZabriChunk;
+import me.nathanfallet.ensilan.city.utils.CityChunk;
 import me.nathanfallet.ensilan.core.Core;
 
 public class PlayerInteract implements Listener {
@@ -42,7 +42,7 @@ public class PlayerInteract implements Listener {
 			}
 
 			// Get chunk owner
-			ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
+			CityChunk zc = new CityChunk(target.getChunk().getX(), target.getChunk().getZ());
 
 			// Check if can't interact with this block
 			if (!zc.isAllowed(e.getPlayer().getUniqueId().toString()) && !e.getPlayer().isOp()) {

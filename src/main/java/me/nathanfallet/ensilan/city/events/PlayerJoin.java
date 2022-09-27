@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import me.nathanfallet.ensilan.city.City;
+import me.nathanfallet.ensilan.city.utils.CityPlayer;
 
 public class PlayerJoin implements Listener {
 	
@@ -13,7 +14,7 @@ public class PlayerJoin implements Listener {
 	@EventHandler
 	public void onPlayerJoinLast(PlayerJoinEvent e) {
 		// Initialize the player
-		City.getInstance().initPlayer(e.getPlayer());
+		City.getInstance().getPlayers().add(new CityPlayer(e.getPlayer()));
 		
 		// Define the game mode and name correctly
 		if (e.getPlayer().isOp()) {

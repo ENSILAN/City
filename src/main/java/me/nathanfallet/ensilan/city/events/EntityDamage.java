@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 
-import me.nathanfallet.ensilan.city.utils.ZabriChunk;
+import me.nathanfallet.ensilan.city.utils.CityChunk;
 import me.nathanfallet.ensilan.core.Core;
 
 public class EntityDamage implements Listener {
@@ -26,7 +26,7 @@ public class EntityDamage implements Listener {
 
 		// Get targeted location
 		Location target = e.getEntity().getLocation();
-		ZabriChunk zc = new ZabriChunk(target.getChunk().getX(), target.getChunk().getZ());
+		CityChunk zc = new CityChunk(target.getChunk().getX(), target.getChunk().getZ());
 		String owner = zc.getOwner();
 
 		// Check if it can damage

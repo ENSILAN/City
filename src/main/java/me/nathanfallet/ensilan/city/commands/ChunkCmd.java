@@ -1,5 +1,7 @@
 package me.nathanfallet.ensilan.city.commands;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,8 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.nathanfallet.ensilan.city.City;
-import me.nathanfallet.ensilan.city.utils.ZabriChunk;
-import me.nathanfallet.ensilan.city.utils.ZabriPlayer;
+import me.nathanfallet.ensilan.city.utils.CityChunk;
+import me.nathanfallet.ensilan.city.utils.CityPlayer;
 
 public class ChunkCmd implements CommandExecutor {
 
@@ -23,8 +25,8 @@ public class ChunkCmd implements CommandExecutor {
 		if (sender instanceof Player) {
 			// Get basic informations and balance
 			Player player = (Player) sender;
-			ZabriPlayer zp = new ZabriPlayer(player);
-			ZabriChunk zc = new ZabriChunk(player.getLocation().getChunk().getX(),
+			CityPlayer zp = City.getInstance().getPlayer(player.getUniqueId());
+			CityChunk zc = new CityChunk(player.getLocation().getChunk().getX(),
 					player.getLocation().getChunk().getZ());
 			String owner = zc.getOwner();
 
@@ -39,7 +41,7 @@ public class ChunkCmd implements CommandExecutor {
 					} else if (owner.equals("spawn")) {
 						player.sendMessage("§eCe chunk fait partie du spawn.");
 					} else {
-						ZabriPlayer zowner = new ZabriPlayer(owner);
+						CityPlayer zowner = City.getInstance().getPlayer(UUID.fromString(owner));
 						player.sendMessage("§eCe chunk appartient à §6" + zowner.getName() + "§e.");
 					}
 				}
