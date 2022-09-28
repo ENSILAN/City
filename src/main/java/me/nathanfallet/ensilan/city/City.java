@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,12 +79,20 @@ public class City extends JavaPlugin {
 						// Fetch data to MySQL Database
 						Statement state = Core.getInstance().getConnection().createStatement();
 						ResultSet result = state.executeQuery(
-								"SELECT name, emeralds FROM city_players INNER JOIN players ON city_players.uuid = players.uuid WHERE emeralds > 0 AND admin = 0 ORDER BY emeralds DESC LIMIT "
-										+ limit);
+							"SELECT name, emeralds FROM city_players " +
+							"INNER JOIN players ON city_players.uuid = players.uuid " +
+							"WHERE emeralds > 0" +
+							"ORDER BY emeralds DESC " +
+							"LIMIT " + limit
+						);
 
 						// Set lines
 						while (result.next()) {
-							lines.add(result.getString("name") + " §6- §e" + result.getInt("emeralds") + " émeraudes");
+							lines.add(
+                                result.getString("name") +
+                                ChatColor.GOLD + " - " + ChatColor.YELLOW +
+                                result.getInt("emeralds") + " émeraudes"
+                            );
 						}
 						result.close();
 						state.close();
@@ -152,10 +161,18 @@ public class City extends JavaPlugin {
 	private boolean initDatabase() {
 		try {
 			Statement create = Core.getInstance().getConnection().createStatement();
-			create.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS `city_players` (`uuid` varchar(255) NOT NULL, `emeralds` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`uuid`))");
-			create.executeUpdate(
-					"CREATE TABLE IF NOT EXISTS `city_chunks` (`x` int(11) NOT NULL, `z` int(11) NOT NULL, `owner` varchar(255) NOT NULL, `friends` longtext NOT NULL, PRIMARY KEY (`x`, `z`))");
+			create.executeUpdate("CREATE TABLE IF NOT EXISTS `city_players` (" +
+				"`uuid` varchar(255) NOT NULL," +
+				"`emeralds` int(11) NOT NULL DEFAULT '0'," +
+				"PRIMARY KEY (`uuid`)" +
+			")");
+			create.executeUpdate("CREATE TABLE IF NOT EXISTS `city_chunks` (" +
+				"`x` int(11) NOT NULL," +
+				"`z` int(11) NOT NULL," +
+				"`owner` varchar(255) NOT NULL," +
+				"`friends` longtext NOT NULL," +
+				"PRIMARY KEY (`x`, `z`)" +
+			")");
 			create.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
