@@ -33,6 +33,9 @@ public class GameProcess extends AbstractGame {
 
 	// Initializer
 	public GameProcess() {
+		// Init
+		super(1);
+
 		// Get from file
 		File f = new File(City.getInstance().getDataFolder(), "game_process.yml");
 		if (!f.exists()) {
@@ -96,12 +99,6 @@ public class GameProcess extends AbstractGame {
 	@Override
 	public String getGameName() {
 		return "City";
-	}
-
-	// Number of the game
-	@Override
-	public int getGameNumber() {
-		return 1;
 	}
 
 	// Handle the start process of the game
