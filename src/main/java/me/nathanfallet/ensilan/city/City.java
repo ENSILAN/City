@@ -11,7 +11,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -79,6 +81,14 @@ public class City extends JavaPlugin {
 		Core.getInstance().getWorldProtectionRules().add(new WorldProtectionRule() {
 			@Override
 			public boolean isAllowedInProtectedLocation(Player player, EnsilanPlayer ep, Location location, Event event) {
+				if (
+					event instanceof PlayerInteractEntityEvent &&
+					((PlayerInteractEntityEvent) event).getRightClicked() instanceof Villager
+				) {
+					// Allow villagers (for trades)
+					return true;
+				}
+
 				CityChunk zc = new CityChunk(location.getChunk().getX(), location.getChunk().getZ());
 				return player.isOp() || zc.isAllowed(player.getUniqueId().toString());
 			}
