@@ -112,7 +112,7 @@ public class City extends JavaPlugin {
 						ResultSet result = state.executeQuery(
 							"SELECT name, emeralds FROM city_players " +
 							"INNER JOIN players ON city_players.uuid = players.uuid " +
-							"WHERE emeralds > 0" +
+							"WHERE emeralds > 0 " +
 							"ORDER BY emeralds DESC " +
 							"LIMIT " + limit
 						);
