@@ -9,29 +9,27 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.nathanfallet.ensilan.city.commands.BankCmd;
 import me.nathanfallet.ensilan.city.commands.ChunkCmd;
 import me.nathanfallet.ensilan.city.commands.StartCmd;
-import me.nathanfallet.ensilan.city.events.BlockBreak;
-import me.nathanfallet.ensilan.city.events.BlockIgnite;
-import me.nathanfallet.ensilan.city.events.BlockPlace;
 import me.nathanfallet.ensilan.city.events.CreatureSpawn;
-import me.nathanfallet.ensilan.city.events.EntityDamage;
-import me.nathanfallet.ensilan.city.events.EntityExplode;
-import me.nathanfallet.ensilan.city.events.PlayerInteract;
 import me.nathanfallet.ensilan.city.events.PlayerInteractEntity;
 import me.nathanfallet.ensilan.city.events.PlayerJoin;
 import me.nathanfallet.ensilan.city.events.PlayerMove;
 import me.nathanfallet.ensilan.city.events.PlayerQuit;
 import me.nathanfallet.ensilan.city.utils.GameProcess;
+import me.nathanfallet.ensilan.city.utils.CityChunk;
 import me.nathanfallet.ensilan.city.utils.CityPlayer;
 import me.nathanfallet.ensilan.core.Core;
 import me.nathanfallet.ensilan.core.interfaces.LeaderboardGenerator;
 import me.nathanfallet.ensilan.core.interfaces.ScoreboardGenerator;
+import me.nathanfallet.ensilan.core.interfaces.WorldProtectionRule;
 import me.nathanfallet.ensilan.core.models.EnsilanPlayer;
 import me.nathanfallet.ensilan.core.models.AbstractGame.GameState;
 
@@ -66,6 +64,29 @@ public class City extends JavaPlugin {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			getPlayers().add(new CityPlayer(player));
 		}
+
+		// World protection rules
+		Core.getInstance().getWorldProtectionRules().add(new WorldProtectionRule() {
+			@Override
+			public boolean isAllowedInProtectedLocation(Player player, EnsilanPlayer ep, Location location, Event event) {
+				return player.isOp();
+			}
+			@Override
+			public boolean isProtected(Location location) {
+				return !isPlaying();
+			}
+		});
+		Core.getInstance().getWorldProtectionRules().add(new WorldProtectionRule() {
+			@Override
+			public boolean isAllowedInProtectedLocation(Player player, EnsilanPlayer ep, Location location, Event event) {
+				CityChunk zc = new CityChunk(location.getChunk().getX(), location.getChunk().getZ());
+				return player.isOp() || zc.isAllowed(player.getUniqueId().toString());
+			}
+			@Override
+			public boolean isProtected(Location location) {
+				return location.getWorld().getName().equals(Core.getInstance().getSpawn().getWorld().getName());
+			}
+		});
 
 		// Initialize leaderboards
 		Core.getInstance().getLeaderboardGenerators().put("city", new LeaderboardGenerator() {
@@ -106,7 +127,7 @@ public class City extends JavaPlugin {
 
 			@Override
 			public String getTitle() {
-				return "Classement des joueurs selon les émeraudes à la banque";
+				return "Emeraudes";
 			}
 		});
 
@@ -130,13 +151,7 @@ public class City extends JavaPlugin {
 
 		// Register events
 		PluginManager pm = Bukkit.getPluginManager();
-		pm.registerEvents(new BlockBreak(), this);
-		pm.registerEvents(new BlockIgnite(), this);
-		pm.registerEvents(new BlockPlace(), this);
 		pm.registerEvents(new CreatureSpawn(), this);
-		pm.registerEvents(new EntityDamage(), this);
-		pm.registerEvents(new EntityExplode(), this);
-		pm.registerEvents(new PlayerInteract(), this);
 		pm.registerEvents(new PlayerInteractEntity(), this);
 		pm.registerEvents(new PlayerJoin(), this);
 		pm.registerEvents(new PlayerQuit(), this);

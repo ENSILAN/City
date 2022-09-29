@@ -9,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.MerchantRecipe;
 
-import me.nathanfallet.ensilan.city.City;
 import me.nathanfallet.ensilan.city.utils.ItemUtils;
 
 public class PlayerInteractEntity implements Listener {
@@ -19,11 +18,6 @@ public class PlayerInteractEntity implements Listener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		// Check if entity is a Villager
 		if (!(e.getRightClicked() instanceof Villager)) {
-			return;
-		}
-		
-		if (!City.getInstance().isPlaying()) {
-			e.getPlayer().sendMessage("§cLes villageois ne sont pas encore disponibles !");
 			return;
 		}
 
