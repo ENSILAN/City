@@ -221,7 +221,7 @@ public class GameProcess extends AbstractGame {
 		// Determine a safe location
 		while (true) {
 			// Create a random location
-			location = Core.getInstance().getSpawn().add(random.nextDouble() * 1000,
+			location = Core.getInstance().getSpawn().clone().add(random.nextDouble() * 1000,
 					-random.nextDouble() * 30, random.nextDouble() * 1000);
 			CityChunk zc = new CityChunk(location.getChunk().getX(), location.getChunk().getZ());
 
