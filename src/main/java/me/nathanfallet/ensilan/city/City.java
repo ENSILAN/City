@@ -94,7 +94,9 @@ public class City extends JavaPlugin {
 			}
 			@Override
 			public boolean isProtected(Location location) {
-				return location.getWorld().getName().equals(Core.getInstance().getSpawn().getWorld().getName());
+				CityChunk zc = new CityChunk(location.getChunk().getX(), location.getChunk().getZ());
+				return location.getWorld().getName().equals(Core.getInstance().getSpawn().getWorld().getName())
+						&& !zc.getOwner().isEmpty();
 			}
 		});
 
