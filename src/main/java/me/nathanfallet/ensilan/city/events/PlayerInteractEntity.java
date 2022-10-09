@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.MerchantRecipe;
 
+import me.nathanfallet.ensilan.city.utils.CityChunk;
 import me.nathanfallet.ensilan.city.utils.ItemUtils;
 
 public class PlayerInteractEntity implements Listener {
@@ -18,6 +19,15 @@ public class PlayerInteractEntity implements Listener {
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
 		// Check if entity is a Villager
 		if (!(e.getRightClicked() instanceof Villager)) {
+			return;
+		}
+
+		// Check if entity is on spawn
+		CityChunk zc = new CityChunk(
+			e.getRightClicked().getLocation().getChunk().getX(),
+			e.getRightClicked().getLocation().getChunk().getZ()
+		);
+		if (!zc.getOwner().equals("spawn")) {
 			return;
 		}
 
