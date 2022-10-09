@@ -21,6 +21,7 @@ import me.nathanfallet.ensilan.city.commands.BankCmd;
 import me.nathanfallet.ensilan.city.commands.ChunkCmd;
 import me.nathanfallet.ensilan.city.commands.StartCmd;
 import me.nathanfallet.ensilan.city.events.CreatureSpawn;
+import me.nathanfallet.ensilan.city.events.EntityDamage;
 import me.nathanfallet.ensilan.city.events.PlayerInteractEntity;
 import me.nathanfallet.ensilan.city.events.PlayerJoin;
 import me.nathanfallet.ensilan.city.events.PlayerMove;
@@ -164,6 +165,7 @@ public class City extends JavaPlugin {
 		// Register events
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new CreatureSpawn(), this);
+		pm.registerEvents(new EntityDamage(), this);
 		pm.registerEvents(new PlayerInteractEntity(), this);
 		pm.registerEvents(new PlayerJoin(), this);
 		pm.registerEvents(new PlayerQuit(), this);
