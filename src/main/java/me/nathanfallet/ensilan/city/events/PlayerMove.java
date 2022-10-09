@@ -47,6 +47,9 @@ public class PlayerMove implements Listener {
 					// Player chunk
 					else if (!fromowner.equals("spawn") && !fromowner.equals("null")) {
 						CityPlayer zfromowner = City.getInstance().getPlayer(UUID.fromString(fromowner));
+						if (zfromowner == null) {
+							zfromowner = new CityPlayer(UUID.fromString(fromowner));
+						}
 						e.getPlayer().sendMessage("§eVous quittez le chunk de §6"+zfromowner.getName()+"§e.");
 					}
 				}
@@ -60,6 +63,9 @@ public class PlayerMove implements Listener {
 					// Already has an owner
 					else if (!toowner.equals("spawn") && !toowner.equals("null")) {
 						CityPlayer ztoowner = City.getInstance().getPlayer(UUID.fromString(toowner));
+						if (ztoowner == null) {
+							ztoowner = new CityPlayer(UUID.fromString(toowner));
+						}
 						e.getPlayer().sendMessage("§eVous enterez dans le chunk de §6"+ztoowner.getName()+"§e.");
 					}
 					// Player can buy this chunk
