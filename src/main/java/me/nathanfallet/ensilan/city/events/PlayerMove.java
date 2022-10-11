@@ -58,7 +58,7 @@ public class PlayerMove implements Listener {
 				if (!toowner.isEmpty()) {
 					// Spawn
 					if (fromowner.isEmpty()) {
-						e.getPlayer().sendMessage("§e§lVous enterez dans le spawn.");
+						e.getPlayer().sendMessage("§e§lVous entrez dans le spawn.");
 					}
 					// Already has an owner
 					else if (!toowner.equals("spawn") && !toowner.equals("null")) {
@@ -66,7 +66,7 @@ public class PlayerMove implements Listener {
 						if (ztoowner == null) {
 							ztoowner = new CityPlayer(UUID.fromString(toowner));
 						}
-						e.getPlayer().sendMessage("§eVous enterez dans le chunk de §6"+ztoowner.getName()+"§e.");
+						e.getPlayer().sendMessage("§eVous entrez dans le chunk de §6"+ztoowner.getName()+"§e.");
 					}
 					// Player can buy this chunk
 					if (toowner.equals("null")) {

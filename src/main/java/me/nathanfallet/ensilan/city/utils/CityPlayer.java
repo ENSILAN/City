@@ -60,7 +60,7 @@ public class CityPlayer {
         try {
             // Database fetch/update/insert
             PreparedStatement fetch = Core.getInstance().getConnection()
-                .prepareStatement("SELECT name, emeralds FROM city_players INNER JOIN players ON city_players.uuid = players.uuid WHERE uuid = ?");
+                .prepareStatement("SELECT name, emeralds FROM city_players INNER JOIN players ON city_players.uuid = players.uuid WHERE city_players.uuid = ?");
             fetch.setString(1, uuid.toString());
 			ResultSet result = fetch.executeQuery();
             if (result.next()) {
